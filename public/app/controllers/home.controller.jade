@@ -1,0 +1,18 @@
+div(home-controller='', atrianglify='', style='min-height:{{ vm.minHeight }}px',
+  ng-class='{ loggedin: vm.user }')
+  .container
+    br
+    br
+    br
+    //- .panel.panel-default(style='width:240px', trianglify='')
+      .panel-body(style='height:320px', trianglify='')
+        h3 test
+    h1 home ctrl
+    div(hero='', hero-id='me') wow
+    a(ui-sref='lobby2') link
+
+    br
+    br
+    img(hero='', hero-id='ranger', src='/assets/rangers/u029e-renee-thum-140.png')
+  //- .container
+    loginbox(data-user='vm.user', data-character='vm.character')

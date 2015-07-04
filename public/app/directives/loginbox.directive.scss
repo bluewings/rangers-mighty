@@ -1,0 +1,147 @@
+@keyframes upDown {
+    0% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-3px);
+    }
+    75% {
+        transform: translateY(3px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+[loginbox-directive=''] {
+    &.animate {
+        .panel {
+            .panel-heading {
+                position:relative;
+                h1, h2, h3, h4, h5, h6 {
+                    &.ng-enter {
+                        transition: all 0.75s cubic-bezier(0.5, 1, 0.5, 1.35);
+                        opacity: 0;
+                        transform: translateX(100%);
+                    }
+                    &.ng-enter-active {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                    &.ng-leave {
+                        position:absolute;
+                        top:10px;
+
+                        transition: all 0.75s cubic-bezier(0.5, 1, 0.5, 1.35);
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                    &.ng-leave-active {
+                        opacity: 0;
+                        transform: translateX(-100%);
+                    }
+                }
+            }
+        }
+    }
+    .panel {
+        position: absolute;
+        transition: all .5s ease-in-out;
+        top: 50%;
+        left: 50%;
+        margin-top: -180px;
+        margin-left: -120px;
+        width: 240px;
+        border: none;
+        background-color: transparent;
+        box-shadow: none;
+        .panel-heading {
+            h1, h2, h3, h4, h5, h6 {
+                margin: 0;
+                font-family: Line BROWN;
+                color: #fff;
+                text-shadow: 0px 3px rgba(0, 0, 0, 0.2);
+            }
+            text-align: center;
+            background-color: transparent;
+        }
+        .panel-body {
+            text-align: center;
+            .character-wrap {
+                position: relative;
+                margin-bottom: 20px;
+                animation-fill-mode: both;
+                animation-timing-function: ease-in-out;
+                animation-iteration-count: infinite;
+                animation-duration: 1.75s;
+                animation-name: upDown;
+                .character-drop {
+                    position: absolute;
+                    &.ng-enter {
+                        transition: all 0.75s cubic-bezier(0.5, 1, 0.5, 1.35);
+                        /*transition:all 1s linear;*/
+                        opacity: 0;
+                        transform: rotate(15deg) scale(3);
+                    }
+                    &.ng-enter-active {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                    &.ng-leave {
+                        transition: all 0.75s cubic-bezier(0.5, -0.35, 0.5, 0);
+                        /*transition:all 1s linear;*/
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                    &.ng-leave-active {
+                        opacity: 0;
+                        transform: rotate(15deg) scale(3);
+                    }
+                }
+            }
+            .pop {
+                &.ng-enter {
+                    transition: all 0.5s cubic-bezier(0.5, 1, 0.5, 1.35);
+                    opacity: 0;
+                    transform: scale(0.15);
+                }
+                &.ng-enter-active {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                /*&.ng-leave {
+                    transition: all 0.75s cubic-bezier(0.5, -0.35, 0.5, 0);
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                &.ng-leave-active {
+                    opacity: 0;
+                    transform: scale(.15);
+                }*/
+            }
+            canvas {}
+            .btn {
+                /*padding: 20px;*/
+                color: #fff;
+                text-shadow: 0px 2px rgba(0, 0, 0, 0.2);
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+    &.loggedin {
+        .panel {
+            /*transition-delay: 1.25s;
+            top: 20px;
+            left: 20px;
+            margin-top: 0;
+            margin-left: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: none;*/
+        }
+    }
+}
+
+[home-controller=''] {}

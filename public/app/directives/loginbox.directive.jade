@@ -1,0 +1,25 @@
+div(loginbox-directive='', ng-class='{ loggedin: vm.user && vm.metric, animate: vm.animate }')
+  .panel.panel-default
+    .panel-heading
+      h3(hero='my-name', ng-if='vm.user && vm.metric') {{ vm.user.name }}
+      h3(ng-if='!vm.user || !vm.metric') RANGERS MIGHTY
+    .panel-body
+      .character-wrap
+        canvas(width='200', height='200')
+        img.character-drop(hero='me', ng-if='vm.user && vm.metric', ng-src='/assets/rangers/{{ vm.character }}',
+          style='top:{{ vm.metric.y }}px;left:{{ vm.metric.x + 5 }}px',
+          width='{{ vm.metric.w }}', height='{{ vm.metric.h }}')
+      div(ng-show='!vm.user')
+
+        a.btn.btn-block.btn-success(href='/auth/naver') 네이버함 아이디로 로그인
+      //- div
+          a.btn.btn-default.pop(ng-if='vm.user && vm.metric',
+            href='', ui-sref='lobby', style='width:100px;margin-right:3px') 들어가기
+          button.btn.btn-default.pop(ng-if='vm.user && vm.metric',
+            ng-click='vm.auth.logout()', style='width:100px;margin-left:3px') 로그아웃  
+          //- button.btn.btn-default(ng-click='vm.auth.logout()') 로그아웃  
+
+
+
+          //- button.btn.btn-default(ng-if='vm.user && vm.metric',
+            ng-click='vm.auth.logout()') 로그아웃  

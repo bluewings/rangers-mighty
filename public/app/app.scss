@@ -1,0 +1,97 @@
+@charset "utf-8";
+
+$color-primary: #337ab7;
+$color-success: #5cb85c;
+$color-info: #5bc0de;
+$color-warning: #f0ad4e;
+$color-danger: #d9534f;
+
+$screen-phone: 480px;
+$screen-tablet: 768px;
+$screen-desktop: 992px;
+$screen-lg-desktop: 1200px;
+
+$screen-phone-max: $screen-tablet - 1;
+$screen-tablet-max: $screen-desktop - 1;
+$screen-desktop-max: $screen-lg-desktop - 1;
+
+$grid-gutter-width: 20px;
+
+
+
+$trans-duration: 0.5s;
+
+$header-height: 50px;
+$footer-height: 60px;
+$footer-height: 0;
+$aside-left-width: 180px;
+$aside-right-width: 220px;
+$layout-border-color:#e7e7e7;
+
+@font-face {
+    font-family: LINE Brown;
+    src: url('/assets/fonts/LINEBrown.ttf');
+}
+
+@media (max-width: $screen-phone-max) {
+    .pull-xs-left {
+        float: left;
+    }
+    .pull-xs-right {
+        float: right;
+    }
+}
+
+@media (min-width: $screen-tablet) and (max-width: $screen-tablet-max) {
+    .pull-sm-left {
+        float: left;
+    }
+    .pull-sm-right {
+        float: right;
+    }
+}
+
+@media (min-width: $screen-desktop) and (max-width: $screen-desktop-max) {
+    .pull-md-left {
+        float: left;
+    }
+    .pull-md-right {
+        float: right;
+    }
+}
+
+@media (min-width: $screen-lg-desktop) {
+    .pull-lg-left {
+        float: left;
+    }
+    .pull-lg-right {
+        float: right;
+    }
+}
+
+/*html {
+    font-size: 10px;
+}
+
+body {
+    font-family: 'Apple SD Gothic NEO', AppleSDGothicNeo, '나눔고딕', NanumGothic, '맑은 고딕', 'Malgun Gothic', '돋움', Dotum, '굴림', Gulim, Helvetica, sans-serif !important;
+    background-color: #ececec;
+    color: #111;
+    word-wrap: break-word;
+    word-break: break-all;
+}*/
+
+// injector
+@import 'controllers/front.controller.scss';
+@import 'controllers/home.controller.scss';
+@import 'controllers/lobby.controller.scss';
+@import 'controllers/lounge.controller.scss';
+@import 'controllers/profile-modal.controller.scss';
+@import 'controllers/room.controller.scss';
+@import 'controllers/wrap.controller.scss';
+@import 'directives/header.directive.scss';
+@import 'directives/loginbox.directive.scss';
+@import 'directives/prototype.directive.scss';
+@import 'directives/simple-chat.directive.scss';
+@import 'services/hero.service.scss';
+// endinjector

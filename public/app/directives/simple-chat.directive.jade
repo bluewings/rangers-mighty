@@ -1,0 +1,90 @@
+div(simple-chat-directive='')
+  //- h4 SAMPLE APP
+  //- pre {{ vm.socketStat | json }}
+  .row
+    .col-sm-4
+      //- .panel.panel-default
+        .panel-heading
+          strong ROOMS
+        .panel-body
+          form
+            .form-group.input-group
+              input.form-control(type='text', ng-model='vm.roomName', placeholder='room name')
+              .input-group-btn
+                button.btn.btn-default(ng-click='vm.createRoom()')
+                  i.fa.fa-fw.fa-check
+          hr
+          ul.list-group
+            a.list-group-item(ng-repeat='(id, room) in vm.socketStat.rooms',
+              ng-click='vm.joinRoom(room)', ng-class='{ active: room.clients[vm.socketStat.me.id] }')
+              | {{ room.name }} 
+              span.badge {{ room.clientCount }}
+
+      .panel.panel-default
+        .panel-heading
+          //- strong {{ vm.user.name }}&nbsp;
+          strong USER
+        .panel-body(style='text-align:center')
+          //- div(style='position:relative;width:100%;height:180px')
+          .form-group
+            .input-group
+              .input-group-btn
+                button.btn.btn-block.btn-default(ng-click='vm.shuffle()')
+                  i.fa.fa-fw.fa-random 
+              input.form-control(type='text', ng-model='vm.user.name')
+              .input-group-btn
+                button.btn.btn-block.btn-default(ng-click='vm.update()',
+                  ng-class='{ "btn-success": vm.snapshot !== vm._snapshot }',
+                  ng-disabled='vm.snapshot === vm._snapshot')
+                  | 수정
+          img(hero='me', ng-src='/assets/rangers/{{ vm.user.character }}', style='max-width:150px')
+
+
+          button.btn.btn-block.btn-default(ng-click='vm.auth.logout()', style='margin-top:10px') 로그아웃
+          //- .clearfix
+
+
+      .panel.panel-default
+        .panel-heading
+          strong CLIENTS
+        .panel-body
+          ul.list-group(style='margin-top:10px;margin-bottom:0')
+            a.list-group-item(ng-repeat='(id, client) in vm.socketStat.clients',
+              ng-class='{ active: id === vm.socketStat.me.id }', style='position:relative;margin-bottom:10px')
+
+              | {{ client.profile.name }},  {{ client.address }}
+              img(ng-src='/assets/rangers/{{ client.profile.character }}',
+                style='position:absolute;bottom:5px;right:5px;z-index:1000', height='55')
+              //- pre {{ client | json }}
+              //- ng-click='vm.enterRoom(room)', ng-class='{ active: room.clients[vm.socketStat.me.id] }')
+              //- | {{ room.name }} 
+              //- span.badge {{ room.clientCount }}
+
+    .col-sm-8
+      .panel.panel-default
+        .panel-heading
+          strong MESSAGES
+        .panel-body
+          form
+            .form-group.input-group
+              input.form-control(type='text', ng-model='vm.message', placeholder='message')
+              .input-group-btn
+                button.btn.btn-default(ng-click='vm.sendMessage()')
+                  i.fa.fa-fw.fa-paper-plane
+          p(ng-repeat='message in vm.messages track by $index')
+            | {{ message }}
+
+            //- button.btn.btn-default(ng-click='vm.enterRoom(room)',
+              ng-class='{ "bt-primary": room.clients[vm.socketStat.me.id] }')
+              i.fa.fa-fw.fa-sign-in
+            //- button.btn.btn-default(ng-click='vm.leaveRoom(room)',
+              ng-class='{ "bt-primary": room.clients[vm.socketStat.me.id] }')
+              i.fa.fa-fw.fa-sign-out
+            
+            
+            //- pre {{ room | json }}
+                  
+      
+
+      //- pre {{ vm.socketStat | json }}
+      //- pre {{ vm.socketData | json }}

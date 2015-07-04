@@ -1,0 +1,46 @@
+header(header-directive='', ng-class='{ animate: vm.animate }')
+  //- pre {{ vm.user | json }}
+  nav.navbar.navbar-inverse.navbar-fixed-top
+    .container-fluid
+      .navbar-header
+        button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar-common-header-collapse', aria-expanded='false')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.navbar-brand(href='/')
+          i.fa.fa-fw.fa-diamond
+          span.sr-only AdHub
+          //- | Selly SELLY
+      #navbar-common-header-collapse.navbar-collapse.collapse
+        //- spotlight search form
+        form.navbar-form.navbar-left.hidden-xs(role='Spotlight 검색')
+          .form-group
+            .input-group
+              input.form-control(type='text', placeholder='Search')
+              .input-group-btn
+                button.btn.btn-default(type='submit')
+                  i.fa.fa-search
+        button.btn.btn-default(ng-click='vm.open()') OPEN
+        a(ui-sref='lobby') lobby
+        a(ui-sref='lobby2') lobby2
+        ul.nav.navbar-nav.navbar-right
+          li.dropdown
+            a.dropdown-toggle(href='', data-toggle='dropdown', role='button', aria-expanded='false')
+              | {{ vm.user.user.loginId }}&nbsp;
+              span.caret
+            ul.dropdown-menu(role='menu')
+              li
+                a(href='') 설정
+              li
+                a(href='') 활동 로그
+              li.divider
+              li
+                a(href='', ng-click='vm.auth.logout()') 로그아웃
+          li
+            a(href='')
+              i.fa.fa-fw.fa-bullhorn
+          li
+            a(href='')
+              i.fa.fa-fw.fa-bell
+              span.badge 3

@@ -1,0 +1,12 @@
+div(lounge-controller='', atrianglify='', tyle='background-image:url(/assets/stages/{{ vm.stage }})')
+  .container
+    br
+    a.btn.btn-default(href='', ui-sref='front') GO TO FRONT
+    a.btn.btn-default(href='', ui-sref='lobby') GO TO LOBBY
+    a.btn.btn-default(href='', ui-sref='room') GO TO ROOM
+
+    h1 prev : {{ prevState }}
+    h1 curr : {{ vm.state.name }} , {{ currState }}
+    h1 next : {{ nextState }}
+    hr
+    h1 {{ vm.state.name }} from-view-{{ fromState }} to-view-{{ toState }}
