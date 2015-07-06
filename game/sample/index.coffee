@@ -9,6 +9,15 @@ module.exports =
   controller: 'GameSampleController'
   factory: (sockets) ->
 
+    console.log '>>> sockets'
+
+    # console.log sockets
+
+    setTimeout ->
+
+      sockets.emit 'message', '>>> enter room : ' + parseInt(Math.random() * 10, 10)
+      console.log 'emit message'
+    , 2000
     mighty = new App.Mighty()
 
     instance =

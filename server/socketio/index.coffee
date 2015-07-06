@@ -6,6 +6,7 @@ User = require('../api/user/user.model')
 userControl = require('../api/user/user.controller')
 resource = require('../api/resource/resource.controller')
 gameControl = require('../api/game/game.controller')
+events = require('events')
 
 module.exports = (io) ->
 
@@ -20,22 +21,68 @@ module.exports = (io) ->
 
   class Client
     constructor: (@id, @profile = {}, options = {}) ->
-      @clientAgent = options.clientAgent
+      @userAgent = options.userAgent
       @address = options.address
       @socket = -> options.socket
       @regTm = new Date()
 
+  # class CustomSocket
+  #   constructor: (socket) ->
+
+  # CustomSocket.prototype = events.EventEmitter.prototype
+
+  class SocketDelegate
+    constructor: ->
+
+  SocketDelegate.prototype = Object.create(events.EventEmitter.prototype)
+
+
+
   class Room
-    constructor: (@name, @instance) ->
+    constructor: (@name, factory) ->
+      my = @
       @id = generateUUID()
       @clients = {}
       @regTm = new Date()
+      @socketDelegate = new SocketDelegate()
+
+      @socketDelegate.on '__message__', (eventName, args) ->
+        args = ['__message__']
+        for each in arguments
+          args.push each
+        context = io.to(my.id)
+        context.emit.apply context, args
+        return
+
+      # eventEmitter = new events.EventEmitter()
+
+      _socket = 
+        emit: (eventName, message) ->
+          args = ['__message__']
+          for each in arguments
+            args.push each
+          context = my.socketDelegate
+          context.emit.apply context, args
+          # io.to(my.id).emit name, message
+          return
+
+        on: (name, message) ->
+          io.to(my.id).emit name, message
+          return
+
+      if factory
+        @instance = factory(_socket)
 
     join: (client) ->
+
+      console.log '> join !!!'
       if client.room and rooms.get(client.room)
         rooms.get(client.room).leave client
       client.room = @id
       client.socket().join @id
+      # client.socket().on 'message', (message) ->
+      #   console.log '>> got message'
+      #   console.log message
       @clients[client.id] = true
       io.to(@id).emit 'message', "#{client.profile.name} has entered the #{@name}."
       return
@@ -54,7 +101,7 @@ module.exports = (io) ->
         handshake = socket.handshake or {}
         handshake.headers = handshake.headers or {}
         client = new Client(socket.id, profile, {
-          clientAgent: handshake.headers['user-agent']
+          userAgent: handshake.headers['user-agent']
           address: handshake.address
           socket: socket
         })
@@ -76,8 +123,8 @@ module.exports = (io) ->
 
   rooms = 
     _dict: {}
-    add: (name, gameId, stage) ->
-      room = new Room(name, gameId, stage)
+    add: (name, factory) ->
+      room = new Room(name, factory)
       @_dict[room.id] = room
       room
 
@@ -140,7 +187,7 @@ module.exports = (io) ->
           # resource.getStages (err, stages) ->
           # stage = stages[Math.floor(Math.random() * stages.length)]
           if game and game.factory
-            room = rooms.add data.name, game.factory()
+            room = rooms.add data.name, game.factory
           else
             room = rooms.add data.name
           room.join client
