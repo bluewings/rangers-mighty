@@ -2,7 +2,7 @@
 
 passport = require('passport')
 NaverStrategy = require('passport-naver').Strategy
-util = require('../../util')
+resource = require('../../api/resource/resource.controller')
 
 exports.setup = (User, config) ->
   passport.use new NaverStrategy(
@@ -15,7 +15,7 @@ exports.setup = (User, config) ->
     , (err, user) ->
       return done(err)  if err
       unless user
-        util.getRangers (err, characters) ->
+        resource.getRangers (err, characters) ->
           if err
             done err
           else
