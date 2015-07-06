@@ -3,7 +3,9 @@
 socketioJwt = require('socketio-jwt')
 config = require('../config/environment')
 User = require('../api/user/user.model')
-UserHandle = require('../api/user/user.controller')
+userControl = require('../api/user/user.controller')
+resource = require('../api/resource/resource.controller')
+gameControl = require('../api/game/game.controller')
 
 module.exports = (io) ->
 
@@ -24,7 +26,7 @@ module.exports = (io) ->
       @regTm = new Date()
 
   class Room
-    constructor: (@name) ->
+    constructor: (@name, @instance) ->
       @id = generateUUID()
       @clients = {}
       @regTm = new Date()
@@ -74,8 +76,8 @@ module.exports = (io) ->
 
   rooms = 
     _dict: {}
-    add: (name) ->
-      room = new Room(name)
+    add: (name, gameId, stage) ->
+      room = new Room(name, gameId, stage)
       @_dict[room.id] = room
       room
 
@@ -105,7 +107,7 @@ module.exports = (io) ->
       io.emit 'stat.clients', clients.get()
       io.emit 'stat.rooms', rooms.get()
 
-      UserHandle.setListener user, (user) ->
+      userControl.setListener user, (user) ->
 
         # console.log '>>>>>'
         allClients = clients.get()
@@ -132,11 +134,21 @@ module.exports = (io) ->
 
       socket.on 'room.create', (data) ->
         client = clients.get socket.id
-        room = rooms.add data.name
-        room.join client
-        socket.emit 'stat.me', client
-        io.emit 'stat.clients', clients.get()
-        io.emit 'stat.rooms', rooms.get()
+
+        gameControl.get data.gameId, (err, game) ->
+          # console.log game
+          # resource.getStages (err, stages) ->
+          # stage = stages[Math.floor(Math.random() * stages.length)]
+          if game and game.factory
+            room = rooms.add data.name, game.factory()
+          else
+            room = rooms.add data.name
+          room.join client
+          socket.emit 'stat.me', client
+          io.emit 'stat.clients', clients.get()
+          io.emit 'stat.rooms', rooms.get()
+          return
+
         return
 
       socket.on 'room.join', (roomId) ->

@@ -29,6 +29,7 @@
     "angular-resource": "~1.4.1",
     "angular-sanitize": "~1.4.1",
     "angular-socket-io": "~0.7.0",
-    "angular-ui-router": "~0.2.15"
+    "angular-ui-router": "~0.2.15",
+    "angular-hero": "~0.0.7"
   }
 }

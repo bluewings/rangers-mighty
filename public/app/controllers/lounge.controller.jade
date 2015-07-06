@@ -1,12 +1,61 @@
-div(lounge-controller='', atrianglify='', tyle='background-image:url(/assets/stages/{{ vm.stage }})')
-  .container
-    br
-    a.btn.btn-default(href='', ui-sref='front') GO TO FRONT
-    a.btn.btn-default(href='', ui-sref='lobby') GO TO LOBBY
-    a.btn.btn-default(href='', ui-sref='room') GO TO ROOM
+div(lounge-controller='', tianglify='', tyle='background-image:url(/assets/stages/{{ vm.stage }})')
+  .container(tyle='background-color:lightyellow')
+    .row
+      .col-xs-4
+        .panel.panel-default(style='height:{{ clientHeight - 40 }}px')
+          .panel-body
+            a.btn.btn-default(href='', ui-sref='front') GO TO FRONT
+            a.btn.btn-default(href='', ui-sref='lobby') GO TO LOBBY
+            a.btn.btn-default(href='', ui-sref='room') GO TO ROOM
+            .list-group
+              a.list-group-item(ng-repeat='(id, room) in vm.socketStat.rooms',
+                ng-click='vm.joinRoom(room)',
+                style='background-image:url("/assets/stages/{{ room.stage }}");background-size: auto 100%;background-position: 50% 0;height:200px')
 
-    h1 prev : {{ prevState }}
-    h1 curr : {{ vm.state.name }} , {{ currState }}
-    h1 next : {{ nextState }}
-    hr
-    h1 {{ vm.state.name }} from-view-{{ fromState }} to-view-{{ toState }}
+
+                | {{ room.name }} 
+                .badge {{ room.clientCount }}
+
+                //- pre {{ room.clients | json }}
+
+                div(ng-repeat='client in room.clients', style='float:left')
+
+                  img(ng-src='/assets/rangers/{{ client.profile.character }}', width='50px')
+                .clearfix
+          .panel-footer(style='position:absolute;bottom:0;left:0;right:0;')
+            //- a.btn.btn-block.btn-default(href='', ui-sref='room') CREATE A NEW GAME
+            //- pre {{ vm.games | json }}
+            .dropdown
+              button.btn.btn-block.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false')
+                strong CREATE A NEW GAME 
+                span.caret
+              ul.dropdown-menu(role='menu')
+                li(ng-repeat='game in vm.games', ng-click='vm.createGame(game)')
+                  a(href='') {{ game.name }}
+      .col-xs-8
+        
+        
+        .panel.panel-default(style='height:{{ clientHeight - 40 }}px')
+          .panel-body.messages(style='height:{{ clientHeight - 103 }}px;overflow-y:auto')
+            //- h4 RANGERS TOWN
+            ul
+              li(ng-repeat='message in vm.messages track by $index') {{ message }}
+
+          .panel-footer(style='position:absolute;bottom:0;left:0;right:0')
+            form.input-group
+              input.form-control.form-inline(type='text', ng-model='vm.message', placeholder='message',
+                autocomplete='off', autocorrect='off', autocapitalize='off', spellcheck='false')
+              .input-group-btn
+                button.btn.btn-default(ng-click='vm.sendMessage()')
+
+                  i.fa.fa-fw.fa-paper-plane
+
+    //- hr
+    //- .pull-right
+      img.hero(hero='', hero-id='ranger', src='/assets/rangers/u029e-renee-thum-140.png')
+
+    //- h1 prev : {{ prevState }}
+    //- h1 curr : {{ vm.state.name }} , {{ currState }}
+    //- h1 next : {{ nextState }}
+    //- hr
+    //- h1 {{ vm.state.name }} from-view-{{ fromState }} to-view-{{ toState }}

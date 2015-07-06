@@ -33,53 +33,6 @@ $layout-border-color:#e7e7e7;
     src: url('/assets/fonts/LINEBrown.ttf');
 }
 
-@media (max-width: $screen-phone-max) {
-    .pull-xs-left {
-        float: left;
-    }
-    .pull-xs-right {
-        float: right;
-    }
-}
-
-@media (min-width: $screen-tablet) and (max-width: $screen-tablet-max) {
-    .pull-sm-left {
-        float: left;
-    }
-    .pull-sm-right {
-        float: right;
-    }
-}
-
-@media (min-width: $screen-desktop) and (max-width: $screen-desktop-max) {
-    .pull-md-left {
-        float: left;
-    }
-    .pull-md-right {
-        float: right;
-    }
-}
-
-@media (min-width: $screen-lg-desktop) {
-    .pull-lg-left {
-        float: left;
-    }
-    .pull-lg-right {
-        float: right;
-    }
-}
-
-/*html {
-    font-size: 10px;
-}
-
-body {
-    font-family: 'Apple SD Gothic NEO', AppleSDGothicNeo, '나눔고딕', NanumGothic, '맑은 고딕', 'Malgun Gothic', '돋움', Dotum, '굴림', Gulim, Helvetica, sans-serif !important;
-    background-color: #ececec;
-    color: #111;
-    word-wrap: break-word;
-    word-break: break-all;
-}*/
 
 // injector
 @import 'controllers/front.controller.scss';

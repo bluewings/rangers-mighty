@@ -1,0 +1,107 @@
+[wrap-controller=''] {}
+
+[ui-view] {
+    &.animat {
+        &.ng-enter {
+            /*transition:;*/
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            animation: 0.7s slideInRight;
+        }
+        &.ng-enter-active {}
+        &.ng-leave {
+            animation: 0.7s slideOutLeft;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+
+@keyframes slideOutLeft {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+
+
+
+@keyframes slideInLeft {
+    from {
+        
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        
+        transform: translateX(100%);
+    }
+}
+
+
+
+
+@keyframes slideInUp {
+    from {
+        
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        
+        transform: translateY(100%);
+    }
+}
+
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes slideOutUp {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-100%);
+    }
+}

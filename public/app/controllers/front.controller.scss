@@ -8,44 +8,58 @@
     background-position: 50% 0;
 }
 
-$duration: .5s;
+$duration: 0.75s;
 
-[ui-view] {
-    min-height:300px;
+html {
+    height: 100%;
 }
 
-/*.slide-left {*/
+body {
+    min-height: 100%;
+}
+
+[ui-view] {
+  z-index:10;
+    &.ng-animate {
+        /*transition: all .1s ease-in-out;*/
+    }
+    &.ng-enter, &.ng-leave {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    &.ng-enter {
+        z-index: 1000;
+    }
+    &.ng-leave {
+        z-index: 1;
+    }
+}
+
+/*.hero-transition {
+    .hero {
+        transition: all $duration ease-in-out;
+    }
+}*/
+
 .slide-left {
-background-color:silver;
     [ui-view] {
-        /*border: 20px solid orange;*/
-        /*opacity:.5;*/
         &.ng-enter {
-            border-top: 50px solid yellow;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 20px solid yellow;
-            transition: all $duration linear;
-            transform: translateX(100%);
+            transition: all $duration ease-in-out;
+            transform: translate3d(100%, 0, 0);
         }
         &.ng-enter-active {
-            transform: translateX(0);
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave {
-            border-top: 50px solid red;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: all $duration linear;
-            transform: translateX(0);
+            transition: all $duration ease-in-out;
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave-active {
-            transform: translateX(-100%);
+            transform: translate3d(-100%, 0, 0);
+            opacity: 0;
         }
     }
 }
@@ -53,64 +67,38 @@ background-color:silver;
 .slide-right {
     [ui-view] {
         &.ng-enter {
-            border-top: 50px solid green;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            /*border: 20px solid yellow;*/
-            transition: all $duration linear;
-            transform: translateX(-100%);
+            transition: all $duration ease-in-out;
+            transform: translate3d(-100%, 0, 0);
         }
         &.ng-enter-active {
-            transform: translateX(0);
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave {
-            border-top: 50px solid blue;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: all $duration linear;
-            transform: translateX(0);
+            transition: all $duration ease-in-out;
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave-active {
-            transform: translateX(100%);
+            transform: translate3d(100%, 0, 0);
+            opacity: 0;
         }
     }
 }
 
 .slide-up {
     [ui-view] {
-        min-height:500px;
         &.ng-enter {
-            border-top: 50px solid green;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            /*border: 20px solid yellow;*/
-            transition: all $duration linear;
-            transform: translateY(500px);
+            transition: all $duration ease-in-out;
+            transform: translate3d(0, 100%, 0);
         }
         &.ng-enter-active {
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave {
-            border-top: 50px solid blue;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: all $duration linear;
-            transform: translateY(0);
+            transition: all $duration ease-in-out;
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave-active {
-            transform: translateY(-100%);
+            transform: translate3d(0, -100%, 0);
         }
     }
 }
@@ -118,31 +106,18 @@ background-color:silver;
 .slide-down {
     [ui-view] {
         &.ng-enter {
-            border-top: 50px solid green;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            /*border: 20px solid yellow;*/
-            transition: all $duration linear;
-            transform: translateY(-100%);
+            transition: all $duration ease-in-out;
+            transform: translate3d(0, -100%, 0);
         }
         &.ng-enter-active {
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave {
-            border-top: 50px solid blue;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: all $duration linear;
-            transform: translateY(0);
+            transition: all $duration ease-in-out;
+            transform: translate3d(0, 0, 0);
         }
         &.ng-leave-active {
-            transform: translateY(100%);
+            transform: translate3d(0, 100%, 0);
         }
     }
 }

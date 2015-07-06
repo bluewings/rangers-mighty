@@ -1,32 +1,20 @@
 'use strict'
 
 express = require('express')
-# game = require('../../../game')
-glob = require('glob')
-util = require('../../util')
-
+game = require('./game.controller')
 router = express.Router()
 
-# router.get '/', (req, res) ->
-#   res.json 200, game.getGames(true)
-#   return
-
-router.get '/characters', (req, res, next) ->
-
-  util.getRangers (err, rangers) ->    
+router.get '/', (req, res, next) ->
+  game.query (err, games) ->
     if err
-      next(err)  
+      next err
     else
-      res.json rangers
+      arr = []
+      Object.keys(games).forEach (key) ->
+        arr.push games[key]
+        return
+      res.json arr
     return
-
-router.get '/stages', (req, res, next) ->
-
-  util.getStages (err, stages) ->    
-    if err
-      next(err)  
-    else
-      res.json stages
-    return
+  return
 
 module.exports = router

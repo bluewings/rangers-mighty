@@ -21,6 +21,11 @@ angular.module 'rangers'
       for id, dummy of mySocket.stat.room.clients
         if mySocket.stat.room.clients.hasOwnProperty id
           mySocket.stat.room.clients[id] = mySocket.stat.clients[id]
+
+    for roomId, room of mySocket.stat.rooms
+      for id, dummy of room.clients
+        if room.clients.hasOwnProperty id
+          room.clients[id] = mySocket.stat.clients[id]      
     return
 
   mySocket.on 'stat.me', (user) ->

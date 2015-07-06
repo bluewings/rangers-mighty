@@ -9,6 +9,7 @@ angular.module 'rangers', [
   'ui.router'
   'angular-jwt'
   'btford.socket-io'
+  'alAngularHero'
   'config'
 ]
 .config ($urlRouterProvider, $stateProvider, $httpProvider, jwtInterceptorProvider) ->
@@ -21,12 +22,6 @@ angular.module 'rangers', [
     controller: 'FrontController'
     controllerAs: 'vm'
     resolve:
-      state: ($state) ->
-
-        console.log 'called'
-
-        $state.current
-
       user: ($q, Auth) ->
         deferred = $q.defer()
         Auth.isLoggedInAsync (loggedIn) ->
@@ -64,6 +59,14 @@ angular.module 'rangers', [
 
       stages: (resource) ->
         resource.stages
+
+      games: ($q, Game) ->
+        deferred = $q.defer()
+        Game.query (games) ->
+          deferred.resolve games
+        , (err) ->
+          deferred.reject err
+        deferred.promise
 
   $stateProvider.state 'room',
     url: '/room'
@@ -119,47 +122,69 @@ angular.module 'rangers', [
     $cookieStore.get 'token'
   return
 
-.run ($rootScope, $state, $timeout, $http, Auth) ->
+.run ($rootScope, $state, $window, $timeout, $http, Auth) ->
+
+  resizeHandler = ->
+    $rootScope.clientWidth = document.documentElement.clientWidth
+    $rootScope.clientHeight = document.documentElement.clientHeight
+    return
+
+  $($window).on 'resize', (event) ->
+    $timeout resizeHandler
+    return
+
+    # $rootScope.clientWidth = document.
+  resizeHandler()
 
 
   $rootScope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
-    $rootScope.prevState = fromState.name
-    $rootScope.currState = toState.name
-    $rootScope.nextState = toState.name
 
-    $rootScope.fromState = fromState.name
-    $rootScope.toState = toState.name
 
-    transition = null
+    transition = ''
 
-    if toState.name is 'front'
-      if fromState.name is 'lounge'
-        transition = 'slide-right'
+    fromName = fromState.name
+    toName = toState.name
 
-    if toState.name is 'lounge'
-      if fromState.name is 'front'
+    if fromName is 'front'
+      if toName is 'lounge'
         transition = 'slide-left'
-      if fromState.name is 'room'
+
+    if fromName is 'lounge'
+      if toName is 'front'
         transition = 'slide-right'
-      if fromState.name is 'lobby'
+      else if toName is 'room'
+        transition = 'slide-up'
+      else if toName is 'lobby'
+        transition = 'slide-down'
+
+    if fromName is 'room'
+      if toName is 'lounge'
+        transition = 'slide-down'
+
+    if fromName is 'lobby'
+      if toName is 'lounge'
         transition = 'slide-up'
 
-    if toState.name is 'lobby'
-      if fromState.name is 'lounge'
-        transition = 'slide-down'
-      # if fromState.name is 'room'
-      #   transition = 'slide-right'
-
-    if toState.name is 'room'
-      # if fromState.name is 'front'
-      #   transition = 'slide-left'
-      if fromState.name is 'lounge'
-        transition = 'slide-left'
     
-    if transition
-      $rootScope.transition = transition
+      
+        
+      
+        
+      # if fromName is 'lobby'
+      #   transition = 'slide-up'
 
-    # $rootScope.prevState = fromState.name
+    # if toName is 'lobby'
+    #   if fromName is 'lounge'
+    #     transition = 'slide-down'
+
+
+    
+    # if transition
+    $rootScope.transition = transition
+
+    # alert transition
+
+    # $rootScope.prevState = fromName
     
   
   $rootScope.$on '$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) ->

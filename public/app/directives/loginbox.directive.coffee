@@ -24,10 +24,10 @@ angular.module 'rangers'
       vm.animate = true
       return
 
-    $timeout ->
-      if vm.user
-        $state.go 'lobby'
-    , 2500
+    # $timeout ->
+    #   if vm.user
+    #     $state.go 'lounge'
+    # , 2500
 
     return
 

@@ -1,9 +1,14 @@
-div(room-controller='', ianglify='', tyle='background-image:url(/assets/stages/{{ vm.stage }})')
+div(room-controller='', trianglify='', tyle='background-image:url(/assets/stages/{{ vm.stage }})')
   .container
     br
     a.btn.btn-default(href='', ui-sref='lounge') GO TO LOUNGE
-    h1 prev : {{ prevState }}
-    h1 curr : {{ vm.state.name }} , {{ currState }}
-    h1 next : {{ nextState }}
+
     hr
-    h1 {{ vm.state.name }} from-view-{{ fromState }} to-view-{{ toState }}
+    
+    img.hero(hero='', hero-id='ranger', src='/assets/rangers/u029e-renee-thum-140.png', width='50')
+
+    //- h1 prev : {{ prevState }}
+    //- h1 curr : {{ vm.state.name }} , {{ currState }}
+    //- h1 next : {{ nextState }}
+    //- hr
+    //- h1 {{ vm.state.name }} from-view-{{ fromState }} to-view-{{ toState }}
