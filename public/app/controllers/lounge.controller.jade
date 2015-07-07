@@ -7,6 +7,7 @@ div(lounge-controller='', tianglify='', tyle='background-image:url(/assets/stage
             a.btn.btn-default(href='', ui-sref='front') GO TO FRONT
             a.btn.btn-default(href='', ui-sref='lobby') GO TO LOBBY
             a.btn.btn-default(href='', ui-sref='room') GO TO ROOM
+            a.btn.btn-default(href='', ui-sref='sample-game') GO TO ROOM
             .list-group
               a.list-group-item(ng-repeat='(id, room) in vm.socketStat.rooms',
                 ng-click='vm.joinRoom(room)',

@@ -30,12 +30,16 @@ angular.module 'rangers'
 
   vm.messages = []
 
+  
+
   vm.createGame = (game) ->
     # if vm.roomName
     mySocket.emit 'room.create', 
       name: Math.random()
       gameId: game.id
-    # vm.roomName = ''
+    # vm.roomName = ''다
+
+
     return
     return
 

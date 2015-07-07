@@ -16,6 +16,7 @@ module.exports = function(grunt) {
   // Configurable paths for the application
   yeoman = {
     client: 'public',
+    games: 'games',
     dist: 'dist'
   };
 
@@ -28,8 +29,22 @@ module.exports = function(grunt) {
         '!bower_components/**/*.jade'
       ]
     },
+    jadegame: {
+      cwd: yeoman.games,
+      src: [
+        '*/view/*.jade',
+        '*/view/**/*.jade'
+      ]
+    },
     sass: {
       src: yeoman.client + '/app/app.scss'
+    },
+    sassgame: {
+      cwd: yeoman.games,
+      src: [
+        '*/view/*.scss',
+        '*/view/**/*.scss'
+      ]
     },
     coffee: {
       cwd: yeoman.client,
@@ -38,6 +53,13 @@ module.exports = function(grunt) {
         '**/*.coffee',
         '!{,*/}*.{spec,mock}.coffee',
         '!bower_components/**/*.coffee'
+      ]
+    },
+    coffeegame: {
+      cwd: yeoman.games,
+      src: [
+        '*/view/*.coffee',
+        '*/view/**/*.coffee'
       ]
     },
     injectSass: {
@@ -54,19 +76,17 @@ module.exports = function(grunt) {
         '.tmp/app/app.js',
         '.tmp/app/**/app.js',
         '.tmp/app/**/*.js',
+        '.tmp/games/**/*.js',
         '!.tmp/app/{,*/}*.{spec,mock}.js',
         yeoman.client + '/assets/**/*.js'
-        // 'tmp/app/config.js',
-        // 'tmp/app/app.js',
-        // 'tmp/app/**/app.js',
-        // 'tmp/app/**/*.js',
-        // '!tmp/app/{,*/}*.{spec,mock}.js',
       ]
     },
     injectCss: {
       src: [
         '.tmp/app/*.css',
-        '.tmp/app/**/*.css'
+        '.tmp/app/**/*.css',
+        '.tmp/games/*.css',
+        '.tmp/games/**/*.css'
       ]
     }
   };
@@ -151,6 +171,10 @@ module.exports = function(grunt) {
         files: yeoman.srcpath.jade.files,
         tasks: ['newer:jade']
       },
+      jadegame: {
+        files: yeoman.srcpath.jadegame.files,
+        tasks: ['newer:jade']
+      },
       sass: {
         files: _.flatten([
           yeoman.srcpath.sass.files,
@@ -158,8 +182,16 @@ module.exports = function(grunt) {
         ]),
         tasks: ['sass', 'autoprefixer']
       },
+      sassgame: {
+        files: yeoman.srcpath.sassgame.files,
+        tasks: ['sass', 'autoprefixer']
+      },
       coffee: {
         files: yeoman.srcpath.coffee.files,
+        tasks: ['newer:coffee']
+      },
+      coffeegame: {
+        files: yeoman.srcpath.coffeegame.files,
         tasks: ['newer:coffee']
       },
       injectJS: {
@@ -274,6 +306,22 @@ module.exports = function(grunt) {
           ext: '.html',
           extDot: 'last'
         }]
+      },
+      compilegame: {
+        options: {
+          data: {
+            debug: false
+          },
+          pretty: true
+        },
+        files: [{
+          expand: true,
+          cwd: yeoman.srcpath.jadegame.cwd,
+          src: yeoman.srcpath.jadegame.src,
+          dest: '.tmp/games',
+          ext: '.html',
+          extDot: 'last'
+        }]
       }
     },
 
@@ -286,6 +334,19 @@ module.exports = function(grunt) {
         files: {
           '.tmp/app/app.css': yeoman.srcpath.sass.src
         }
+      },
+      compilegame: {
+        options: {
+          compass: false
+        },
+        files: [{
+          expand: true,
+          cwd: yeoman.srcpath.sassgame.cwd,
+          src: yeoman.srcpath.sassgame.src,
+          dest: '.tmp/games',
+          ext: '.css',
+          extDot: 'last'
+        }]
       }
     },
 
@@ -300,6 +361,19 @@ module.exports = function(grunt) {
           cwd: yeoman.srcpath.coffee.cwd,
           src: yeoman.srcpath.coffee.src,
           dest: '.tmp',
+          ext: '.js',
+          extDot: 'last'
+        }]
+      },
+      compilegame: {
+        options: {
+          sourceMap: true
+        },
+        files: [{
+          expand: true,
+          cwd: yeoman.srcpath.coffeegame.cwd,
+          src: yeoman.srcpath.coffeegame.src,
+          dest: '.tmp/games',
           ext: '.js',
           extDot: 'last'
         }]

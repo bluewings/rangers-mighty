@@ -19,6 +19,11 @@ module.exports = (io) ->
     )
     uuid
 
+  class SocketDelegate
+    constructor: ->
+  
+  SocketDelegate.prototype = Object.create(events.EventEmitter.prototype)
+
   class Client
     constructor: (@id, @profile = {}, options = {}) ->
       @userAgent = options.userAgent
@@ -26,70 +31,72 @@ module.exports = (io) ->
       @socket = -> options.socket
       @regTm = new Date()
 
-  # class CustomSocket
-  #   constructor: (socket) ->
-
-  # CustomSocket.prototype = events.EventEmitter.prototype
-
-  class SocketDelegate
-    constructor: ->
-
-  SocketDelegate.prototype = Object.create(events.EventEmitter.prototype)
-
-
-
   class Room
-    constructor: (@name, factory) ->
+    constructor: (@name, game) ->
       my = @
       @id = generateUUID()
       @clients = {}
       @regTm = new Date()
-      @socketDelegate = new SocketDelegate()
-
-      @socketDelegate.on '__message__', (eventName, args) ->
-        args = ['__message__']
-        for each in arguments
-          args.push each
-        context = io.to(my.id)
-        context.emit.apply context, args
-        return
-
-      # eventEmitter = new events.EventEmitter()
-
-      _socket = 
-        emit: (eventName, message) ->
-          args = ['__message__']
-          for each in arguments
-            args.push each
-          context = my.socketDelegate
-          context.emit.apply context, args
-          # io.to(my.id).emit name, message
-          return
-
-        on: (name, message) ->
-          io.to(my.id).emit name, message
-          return
-
-      if factory
-        @instance = factory(_socket)
+      if game
+        @gameId = game.id
+        @socketDelegate = new SocketDelegate()
+        limitedSocket = 
+          emit: (eventName, message) ->
+            args = ['__message__']
+            for each in arguments
+              args.push each
+            context = io.to(my.id)
+            context.emit.apply context, args
+            return
+          emitTo: (receivers, eventName, message) ->
+            args = ['__message__']
+            for each in arguments
+              args.push each
+            receivers = args.shift()
+            if Object::toString.call(someVar) isnt '[object Array]'
+              receivers = [receivers]
+            for receiver in receivers
+              if my.clients[receiver.id]
+                context = my.clients[receiver.id].socket()
+                context.emit.apply context, args
+            return
+          on: (eventName, callback) ->
+            my.socketDelegate.on.apply my.socketDelegate, arguments
+            return
+        @instance = game.factory(limitedSocket, {
+          clients: ->
+            my.clients
+          eject: my.leave
+        })
 
     join: (client) ->
-
-      console.log '> join !!!'
+      my = @
       if client.room and rooms.get(client.room)
         rooms.get(client.room).leave client
       client.room = @id
       client.socket().join @id
-      # client.socket().on 'message', (message) ->
-      #   console.log '>> got message'
-      #   console.log message
+      client.callback = (eventName, nmessage) ->
+        args = []
+        for arg in arguments
+          args.push arg
+        args.splice(1, 0, client)
+        my.socketDelegate.emit.apply my.socketDelegate, args
+        return
+      client.socket().on '__message__', client.callback
       @clients[client.id] = true
       io.to(@id).emit 'message', "#{client.profile.name} has entered the #{@name}."
+      if @instance and typeof @instance.onenter is 'function'
+        @instance.onenter client
       return
 
     leave: (client) ->
+      if @instance and typeof @instance.onleave is 'function'
+        @instance.onleave client
       io.to(@id).emit 'message', "#{client.profile.name} has left the #{@name}."
       client.socket().leave @id
+      if client.callback
+        client.socket().removeListener '__message__', client.callback
+        delete client.callback
       delete @clients[client.id]
       client.room = null
       return
@@ -123,8 +130,8 @@ module.exports = (io) ->
 
   rooms = 
     _dict: {}
-    add: (name, factory) ->
-      room = new Room(name, factory)
+    add: (name, game) ->
+      room = new Room(name, game)
       @_dict[room.id] = room
       room
 
@@ -154,40 +161,31 @@ module.exports = (io) ->
       io.emit 'stat.clients', clients.get()
       io.emit 'stat.rooms', rooms.get()
 
-      userControl.setListener user, (user) ->
-
-        # console.log '>>>>>'
-        allClients = clients.get()
-        # console.log '>>> ' + user._id
-        for clientId, each of allClients
-          # console.log each.profile
-          if each.profile._id.toString() is user._id.toString()
-            # console.log '>>> '
-            each.profile = user
-          # console.log client
-        # client.profile = user
-        socket.emit 'stat.me', client
-        io.emit 'stat.clients', clients.get()
-
-      
+      # userControl.setListener user, (user) ->
+      #   # console.log '>>>>>'
+      #   allClients = clients.get()
+      #   # console.log '>>> ' + user._id
+      #   for clientId, each of allClients
+      #     # console.log each.profile
+      #     if each.profile._id.toString() is user._id.toString()
+      #       # console.log '>>> '
+      #       each.profile = user
+      #     # console.log client
+      #   # client.profile = user
+      #   socket.emit 'stat.me', client
+      #   io.emit 'stat.clients', clients.get()      
 
       socket.on 'message', (message) ->
         client = clients.get socket.id
         if client.room
           io.to(client.room).emit 'message', "#{client.profile.name} : #{message}"
-
-          # 'room message : ' + message
         return
 
       socket.on 'room.create', (data) ->
         client = clients.get socket.id
-
         gameControl.get data.gameId, (err, game) ->
-          # console.log game
-          # resource.getStages (err, stages) ->
-          # stage = stages[Math.floor(Math.random() * stages.length)]
           if game and game.factory
-            room = rooms.add data.name, game.factory
+            room = rooms.add data.name, game
           else
             room = rooms.add data.name
           room.join client
@@ -195,7 +193,6 @@ module.exports = (io) ->
           io.emit 'stat.clients', clients.get()
           io.emit 'stat.rooms', rooms.get()
           return
-
         return
 
       socket.on 'room.join', (roomId) ->

@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module 'rangers'
-.factory 'mySocket', (socketFactory, $cookieStore) ->
+.factory 'mySocket', (socketFactory, $cookieStore, $state) ->
   token = $cookieStore.get 'token'
   if token
     ioSocket = io("?token=#{token}", path: '/socket.io')
@@ -10,6 +10,8 @@ angular.module 'rangers'
     mySocket = socketFactory()
 
   mySocket.stat = {}
+
+  lastRoom = {}
 
   setStat = ->
     return if !mySocket.stat.me or !mySocket.stat.rooms
@@ -26,12 +28,35 @@ angular.module 'rangers'
       for id, dummy of room.clients
         if room.clients.hasOwnProperty id
           room.clients[id] = mySocket.stat.clients[id]      
+
+    if mySocket.stat.rooms and mySocket.stat.me and mySocket.stat.me.room and mySocket.stat.rooms[mySocket.stat.me.room]
+      currentRoom = mySocket.stat.rooms[mySocket.stat.me.room]
+      console.log currentRoom
+
+      if lastRoom.id isnt currentRoom.id
+        if currentRoom.name is 'lobby'
+          $state.go 'lounge'
+        else
+          console.log currentRoom
+          $state.go "#{currentRoom.gameId}-game",
+            roomId: currentRoom.id
+          console.log 'room change detected!!! '
+          console.log "#{lastRoom.name} > #{currentRoom.name}"
+        lastRoom = currentRoom
+
+
+
+
     return
 
   mySocket.on 'stat.me', (user) ->
 
     mySocket.stat.me = user
     mySocket.stat.room = mySocket.stat.me.room
+
+
+
+
     setStat()
     return
 

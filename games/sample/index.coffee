@@ -5,23 +5,43 @@ App = require('./app')
 module.exports =
   author: 'darth.vader@navercorp.com'
   name: 'sample game'
-  template: 'game/sample/view/sample.controller.html'
+  template: 'games/sample/view/sample.controller.html'
   controller: 'GameSampleController'
-  factory: (sockets) ->
+  factory: (socket, roomAPI) ->
 
-    console.log '>>> sockets'
+    console.log '>>> socket'
 
-    # console.log sockets
+    console.log roomAPI
+
+    # console.log socket
+    socket.on 'message', (sender, message) ->
+      console.log ''
+      console.log '>>> on message in game'
+      console.log message
+      console.log '>>> sender'
+      console.log sender
+      console.log arguments
+      console.log ''
+      socket.emit 'messagetest', sender
+
+
 
     setTimeout ->
 
-      sockets.emit 'message', '>>> enter room : ' + parseInt(Math.random() * 10, 10)
+      socket.emit 'message', '>>> enter room : ' + parseInt(Math.random() * 10, 10)
       console.log 'emit message'
     , 2000
     mighty = new App.Mighty()
 
     instance =
-      onenter: (socket) ->
+      onenter: (client) ->
+        # console.log 'got client'
+        # console.log client
+
+
+
+        return
+      # onenter: (socket) ->
 
         console.log '>>> mighty entered'
 
@@ -52,9 +72,13 @@ module.exports =
         # console.log mighty
 
 
-      onleave: (socket) ->
+      # onleave: (socket) ->
+      onleave: (client) ->
 
         console.log '>>> exit'
+
+
+        return
 
         for player in mighty.players
           if player.socket.id is socket.id

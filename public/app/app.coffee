@@ -12,9 +12,12 @@ angular.module 'rangers', [
   'alAngularHero'
   'config'
 ]
-.config ($urlRouterProvider, $stateProvider, $httpProvider, jwtInterceptorProvider) ->
+.constant 'reference', {}
+.config ($urlRouterProvider, $stateProvider, $httpProvider, jwtInterceptorProvider, reference) ->
 
   $urlRouterProvider.otherwise '/'
+
+  reference.stateProvider = $stateProvider
 
   $stateProvider.state 'front',
     url: '/'
@@ -122,26 +125,64 @@ angular.module 'rangers', [
     $cookieStore.get 'token'
   return
 
-.run ($rootScope, $state, $window, $timeout, $http, Auth) ->
+.run ($rootScope, $state, $window, $timeout, $http, Auth, Game, reference) ->
+
+  onmessage =
+    listeners: {}
+    callback: (eventName, message) ->
+      args = []
+      for arg in arguments
+        args.push arg
+      eventName = args.shift()
+      if onmessage.listeners[eventName]
+        for listener in onmessage.listeners[eventName]
+          listener.apply null, args
+      return
+
+  Game.query (games) ->
+    for game in games
+      reference.stateProvider.state "#{game.id}-game",
+        url: "/games/#{game.id}/{roomId:[A-Za-z0-9\-]+}"
+        templateUrl: game.template
+        controller: game.controller
+        controllerAs: 'vm'
+        resolve:
+          socket: ($stateParams, mySocket) ->
+            onmessage.listeners = {}
+            try mySocket.removeListener '__message__', onmessage.callback
+            mySocket.on '__message__', onmessage.callback
+            socket = 
+              emit: (eventName, message) ->
+                args = ['__message__']
+                for arg in arguments
+                  args.push arg
+                mySocket.emit.apply mySocket, args
+                return
+              on: (eventName, callback) ->
+                unless onmessage.listeners[eventName]
+                  onmessage.listeners[eventName] = []
+                onmessage.listeners[eventName].push callback
+                return
+            socket
+    return
+
+  , (err) ->
+    throw err
+    return
 
   resizeHandler = ->
     $rootScope.clientWidth = document.documentElement.clientWidth
     $rootScope.clientHeight = document.documentElement.clientHeight
     return
 
+  resizeHandler()
+
   $($window).on 'resize', (event) ->
     $timeout resizeHandler
     return
 
-    # $rootScope.clientWidth = document.
-  resizeHandler()
-
-
   $rootScope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
-
-
     transition = ''
-
     fromName = fromState.name
     toName = toState.name
 
@@ -152,12 +193,12 @@ angular.module 'rangers', [
     if fromName is 'lounge'
       if toName is 'front'
         transition = 'slide-right'
-      else if toName is 'room'
+      else if toName.search(/\-game$/) isnt -1
         transition = 'slide-up'
       else if toName is 'lobby'
         transition = 'slide-down'
 
-    if fromName is 'room'
+    if fromName.search(/\-game$/) isnt -1
       if toName is 'lounge'
         transition = 'slide-down'
 
@@ -165,47 +206,7 @@ angular.module 'rangers', [
       if toName is 'lounge'
         transition = 'slide-up'
 
-    
-      
-        
-      
-        
-      # if fromName is 'lobby'
-      #   transition = 'slide-up'
-
-    # if toName is 'lobby'
-    #   if fromName is 'lounge'
-    #     transition = 'slide-down'
-
-
-    
-    # if transition
     $rootScope.transition = transition
-
-    # alert transition
-
-    # $rootScope.prevState = fromName
-    
-  
-  $rootScope.$on '$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) ->
-    return
-
-    $rootScope.prevState = fromState.name
-    $rootScope.currState = toState.name
-    $rootScope.nextState = toState.name
-
-    $rootScope.fromState = fromState.name
-    $rootScope.toState = toState.name
-
-
-    console.log transition
-    # if fromState.name is 'lounge'
-    #   if toState.name is 'room'
-    #     transition = 'slide-left'
-    
-    # console.log('Previous state:'+$rootScope.previousState)
-    # console.log('Current state:'+$rootScope.currentState)
-# });
 
   $rootScope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
     # console.log 'check 1 : ' + $('[ui-view] [hero]').size()

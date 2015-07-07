@@ -14,7 +14,7 @@ controller =
     if cached.games
       callback null, cached.games
     else
-      glob __dirname + '/../../../game/*/index.coffee', (err, files) ->
+      glob __dirname + '/../../../games/*/index.coffee', (err, files) ->
         if err
           return callback(err)
         else
